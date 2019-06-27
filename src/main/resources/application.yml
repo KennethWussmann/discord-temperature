@@ -1,0 +1,22 @@
+application:
+  broadcast:
+    roomName: 'Hue temperature sensor 2'
+    roomDisplayName: 'Wohnzimmer'
+    discordRpc:
+      enabled: false
+      #clientId: '593793748056539136'
+    discordStatus:
+      enabled: true
+      token: 'Sometoken'
+      format: '{temperature} im {room}'
+      #statusType: 'DEFAULT'
+  temperature:
+    unit: 'CELSIUS'
+    hue:
+      enabled: true
+      #bridgeIp: '192.168.178.44'
+      #username: 'Somename'
+  publish:
+    scheduled:
+      enabled: true
+      fixedRate: 10000
