@@ -1,6 +1,6 @@
 package de.ketrwu.discordtemperature
 
-import de.ketrwu.discordtemperature.module.hue.FileStorageService
+import de.ketrwu.discordtemperature.service.FileStorageService
 import de.ketrwu.discordtemperature.service.PublishingService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication

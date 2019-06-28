@@ -5,13 +5,12 @@ import de.ketrwu.discordtemperature.logger
 import de.ketrwu.discordtemperature.service.BroadcastService
 import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDA
+import net.dv8tion.jda.core.JDABuilder
+import net.dv8tion.jda.core.entities.Game
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
-import java.lang.UnsupportedOperationException
 import javax.annotation.PostConstruct
-import net.dv8tion.jda.core.JDABuilder
-import net.dv8tion.jda.core.entities.Game
 
 @Service
 @ConditionalOnProperty(prefix = "application.broadcast", name = ["discordStatus.enabled"])
@@ -56,6 +55,9 @@ class DiscordStatusBroadcastService : BroadcastService {
                 statusType,
                 format
                     .replace("{temperature}", "${temp.temperature}°${temp.unit.symbol}")
+                    .replace("{humidity}", temp.humidity?.let { "$it%" } ?: "")
+                    .replace("{noise}", temp.noise?.let { "$it dB" } ?: "")
+                    .replace("{co2}", temp.co2?.let { "$it ppm" } ?: "")
                     .replace("{room}", temp.roomName)
             )
         } else throw UnsupportedOperationException("Broadcasting multiple temperatures is not supported yet! Please specify a room name in the configuration!")

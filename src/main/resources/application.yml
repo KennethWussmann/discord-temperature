@@ -1,22 +1,55 @@
 application:
+
+  # Output
   broadcast:
-    roomName: 'Hue temperature sensor 2'
-    roomDisplayName: 'Wohnzimmer'
+    # room that should be broadcasted
+    roomName: 'Wohnzimmer'
+    # optional, name the room should be displayed as
+    #roomDisplayName: 'Wohnzimmer'
+
+    # Show data as rich presence
     discordRpc:
-      enabled: false
+      enabled: true
+      # Possible variables: {temperature} {humidity} {noise} {co2}
+      format: '{temperature} / {humidity} Luftfeuchte / {noise}'
+      # optional, clientId to use as playing game
       #clientId: '593793748056539136'
+
+    # Show data as playing status
     discordStatus:
-      enabled: true
+      enabled: false
       token: 'Sometoken'
-      format: '{temperature} im {room}'
+      # Possible variables: {temperature} {humidity} {noise} {co2}
+      format: '{temperature} / {humidity} / {noise}'
+      # optional, type of status: Possible values DEFAULT, STREAMING, LISTENING
       #statusType: 'DEFAULT'
+
+  # Source of temperature data
   temperature:
+    # temperature unit (CELSIUS or FAHRENHEIT)
     unit: 'CELSIUS'
+
+    # Use Philips Hue motion sensor as source
     hue:
+      enabled: false
+      # optional, ip of Hue bridge
+      #bridgeIp: '192.168.1.1'
+      # optional, but required when bridgeIp is used: Username to login as
+      #username: 'DiscordTemperature'
+
+    # Use Netatmo health coach as source
+    netatmo:
       enabled: true
-      #bridgeIp: '192.168.178.44'
-      #username: 'Somename'
+      # You have to create an own app in the Netatmo Dev console: https://dev.netatmo.com/myaccount/createanapp
+      clientId: 'Some id'
+      clientSecret: 'Some secret'
+      # Device id of the health coach you want to use
+      deviceId: 'Device id'
+
+  # Coordinator for publishing temperature data to broadcasters
   publish:
+    # Publish data on scheduled basis
     scheduled:
       enabled: true
-      fixedRate: 10000
+      # rate in milliseconds
+      fixedRate: 120000

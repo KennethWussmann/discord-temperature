@@ -9,6 +9,7 @@ import com.philips.lighting.model.PHHueParsingError
 import com.philips.lighting.model.sensor.PHTemperatureSensor
 import de.ketrwu.discordtemperature.RoomTemperature
 import de.ketrwu.discordtemperature.logger
+import de.ketrwu.discordtemperature.service.FileStorageService
 import de.ketrwu.discordtemperature.service.TemperatureService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -43,7 +44,7 @@ class HueTemperatureService : TemperatureService, PHSDKListener {
     }
 
     @PostConstruct
-    fun start() = with(fileStorageService.reload()) {
+    fun start() = with(fileStorageService.load(HueConfiguration::class)) {
         sdk.notificationManager.registerSDKListener(this@HueTemperatureService)
         if (lastIp != null && userName != null) {
             connectToLastKnown(this)
@@ -54,7 +55,7 @@ class HueTemperatureService : TemperatureService, PHSDKListener {
         }
     }
 
-    private fun connectToLastKnown(config: FileStorageService.FileConfiguration) {
+    private fun connectToLastKnown(config: HueConfiguration) {
         LOG.info("Connecting to last known bridge ...")
         accessPoint = PHAccessPoint()
         accessPoint!!.ipAddress = config.lastIp
@@ -69,7 +70,7 @@ class HueTemperatureService : TemperatureService, PHSDKListener {
     }
 
     private fun connectToIp() {
-        LOG.info("Connecting to configurated bridge ...")
+        LOG.info("Connecting to configured bridge ...")
         val accessPoint = PHAccessPoint()
         accessPoint.ipAddress = bridgeIp
         accessPoint.username = username
@@ -102,26 +103,28 @@ class HueTemperatureService : TemperatureService, PHSDKListener {
 
     override fun onBridgeConnected(bridge: PHBridge, userName: String) {
         val bridgeIp = bridge.resourceCache.bridgeConfiguration.ipAddress
-        fileStorageService.update {
-            lastIp = bridgeIp
-            this.userName = userName
-        }
+        fileStorageService
+            .load(HueConfiguration::class)
+            .save<HueConfiguration> {
+                lastIp = bridgeIp
+                this.userName = userName
+            }
         LOG.info("Connected to Hue Bridge with IP $bridgeIp and username $userName")
     }
 
     override fun onConnectionLost(accessPoint: PHAccessPoint) {
         this.accessPoint = accessPoint
         LOG.error("Connection to bridge lost! Trying to reconnect ...")
-        connectToLastKnown(fileStorageService.reload())
+        connectToLastKnown(fileStorageService.load(HueConfiguration::class))
     }
 
     override fun onConnectionResumed(p0: PHBridge?) {
         LOG.info("Connection to bridge resumed")
     }
 
-    override fun onCacheUpdated(p0: MutableList<Int>?, p1: PHBridge?) { }
+    override fun onCacheUpdated(p0: MutableList<Int>?, p1: PHBridge?) {}
 
-    override fun onParsingErrors(p0: MutableList<PHHueParsingError>?) { }
+    override fun onParsingErrors(p0: MutableList<PHHueParsingError>?) {}
 
-    override fun onError(p0: Int, p1: String?) { }
+    override fun onError(p0: Int, p1: String?) {}
 }

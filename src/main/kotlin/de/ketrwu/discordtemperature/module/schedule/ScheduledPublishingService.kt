@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import javax.annotation.PostConstruct
 
 /**
  * [PublishingService] that receives and sends temperature data on a scheduled basis
@@ -32,6 +31,7 @@ class ScheduledPublishingService : PublishingService {
     @Scheduled(fixedRateString = "${'$'}{application.publish.scheduled.fixedRate:10000}")
     fun publish() = try {
         broadcastService.broadcast(temperatureService.getTemperatures())
+        tries = 10
     } catch (e: IllegalStateException) {
         if (tries < 0) {
             LOG.error("Failed to startup all services, please check log and configuration!", e)

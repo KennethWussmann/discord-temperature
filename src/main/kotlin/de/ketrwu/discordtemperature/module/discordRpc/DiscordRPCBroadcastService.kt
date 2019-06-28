@@ -1,13 +1,12 @@
 package de.ketrwu.discordtemperature.module.discordRpc
 
+import club.minnced.discord.rpc.DiscordEventHandlers
 import de.ketrwu.discordtemperature.RoomTemperature
 import de.ketrwu.discordtemperature.logger
 import de.ketrwu.discordtemperature.service.BroadcastService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
-import java.lang.UnsupportedOperationException
-import club.minnced.discord.rpc.DiscordEventHandlers
 import javax.annotation.PostConstruct
 import kotlin.concurrent.thread
 
@@ -28,6 +27,9 @@ class DiscordRPCBroadcastService : BroadcastService {
     @Value("${'$'}{application.broadcast.discordRpc.clientId:593793748056539136}")
     private lateinit var clientId: String
 
+    @Value("${'$'}{application.broadcast.discordRpc.format}")
+    private lateinit var format: String
+
     companion object {
         private val LOG = logger()
     }
@@ -44,11 +46,15 @@ class DiscordRPCBroadcastService : BroadcastService {
             discord {
                 presence {
                     details = temp.roomName
-                    state = "${temp.temperature}°${temp.unit.symbol}"
+                    state = format
+                        .replace("{temperature}", "${temp.temperature}°${temp.unit.symbol}")
+                        .replace("{humidity}", temp.humidity?.let { "$it%" } ?: "")
+                        .replace("{noise}", temp.noise?.let { "$it dB" } ?: "")
+                        .replace("{co2}", temp.co2?.let { "$it ppm" } ?: "")
+                        .replace("{room}", temp.roomName)
                     startTimestamp = temp.lastUpdated.time / 1000
                 }
             }
-            LOG.info("Broadcasting ${temp.temperature}°${temp.unit.symbol} in ${temp.roomName}")
         } else throw UnsupportedOperationException("Broadcasting multiple temperatures is not supported yet! Please specify a room name in the configuration!")
     }
 
