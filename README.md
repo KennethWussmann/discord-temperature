@@ -1,5 +1,6 @@
 # Discord Temperature
 Show your room temperature as your Discord status.
+
 ![](https://i.imgur.com/oVRzFr6.png)
 
 # Features
