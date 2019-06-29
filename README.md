@@ -8,6 +8,9 @@ Show your room temperature as your Discord status.
 * Netatmo Healthy Home Coach (Also supports humidity, noise and CO2)
 * Show data as Discord Status or via Discord rich presence
 
+# Download
+Download the latest version as JAR or WAR from the [releases](https://github.com/KennethWussmann/discord-temperature/releases).
+
 # Configuration
 Download the [default configuration](https://github.com/KennethWussmann/discord-temperature/blob/master/src/main/resources/application.yml) and put it in the same folder as the JAR.
 Setup modules to your likings. Be sure that you can only have one `broadcast`, `temperature` & `publish` source.
