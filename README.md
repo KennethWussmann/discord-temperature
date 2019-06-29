@@ -1,4 +1,4 @@
-# Discord Temperature
+# Discord Temperature [![Build Status](https://travis-ci.org/KennethWussmann/discord-temperature.svg?branch=master)](https://travis-ci.org/KennethWussmann/discord-temperature)
 Show your room temperature as your Discord status.
 
 ![](https://i.imgur.com/oVRzFr6.png)
