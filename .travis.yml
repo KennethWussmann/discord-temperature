@@ -1,0 +1,20 @@
+language: java
+script:
+- "./mvnw clean compile"
+- "./mvnw package -P jar"
+- "./mvnw package -P war"
+before_deploy:
+- git config --local user.name "Kenneth Wussmann"
+- git config --local user.email "kenneth@wussmann.net"
+- export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
+- git tag $TRAVIS_TAG
+deploy:
+  provider: releases
+  api_key:
+    secure: Rr7/bultXgEXsFFBF0DFJJuFn+MOphllZbqOZgqy5GM05y1jYqlzNJORY0M+Ftqq4METPaQSHlb8S4PVhXUBkqLCmQA6UaqZkFgTQ4YShgHiHQo2CALad8aW+ZJFOv1VCQX0BvwYnfXtp8u5OByXdS9rosHMAHxoE5mvyQq5i2WNDGPHM++9PU1BB2LiTBKfyKZeepU8iINzWOEvyGbJ8FayI8qqaLm3oPzCVnzGXDLxNzeTujrwQmZtCph6vTfiRozIzQMv3BNxQF9YIvP0Ps8QEaI7QirVHV3x8BPW5tafIQAdGKOzEctva2O6fGRcKA2MTnGb3fouiatKzyBdfCrduWrGAXWdL1MQtGXDFxa25ak8F0KPDiK0rpeR1IVl5ClmM4wR6InJvknoFkL3Me30nMAka14rcoqvX1aMBjXgILOTmyj9GkFFJ8Q+oIK1Z3Pfttnpn51LQYvtwFN0clrwAyX6uU8D7jCCzaamhLlRdJG2HwN2C82DOC+i4HRJlu/M9gMwbn+Hb+IFH3wJNRznKpg+2u3iksTGi3cD1GKdnOiPPp3gfXzQs0VIZrS+w/05SAwlbttXOWuln/0pEPMNW4LAItadnU+N5wSzuTBgZfK2GUznDlS8zHwBLFaP661NVKhRnqR+NHhnbj19EZ3hW82rSIT80fKf/WNJz/I=
+  file:
+    - "target/*.jar"
+    - "target/*.war"
+  on:
+    tags: true
+    repo: KennethWussmann/discord-temperature
