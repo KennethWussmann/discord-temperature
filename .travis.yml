@@ -16,5 +16,5 @@ deploy:
     - "target/*.jar"
     - "target/*.war"
   on:
-    tags: true
+    branch: master
     repo: KennethWussmann/discord-temperature
